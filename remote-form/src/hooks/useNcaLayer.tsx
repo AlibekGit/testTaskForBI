@@ -48,9 +48,9 @@ export const useNcaLayer = () => {
         };
 
         if (rw.code === "200") {
-          setXmlRes(rw.getResponseObject);
+          setXmlRes(rw.getResponseObject());
         } else if (rw.code === "500") {
-          setXmlRes(`Ошибка ${rw.getMessage}, попытайтесь снова`);
+          setXmlRes(`Ошибка ${rw.getMessage()}, попытайтесь снова`);
         }
       }
     };

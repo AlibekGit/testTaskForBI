@@ -45,7 +45,7 @@ module.exports = (_, argv) => ({
       filename: "remoteEntry.js",
       remotes: {},
       exposes: {
-        "./NCAForm": "./src/App.tsx"
+        "./NCAForm": "./src/XmlSign.tsx"
       },
       shared: {
         ...deps,
