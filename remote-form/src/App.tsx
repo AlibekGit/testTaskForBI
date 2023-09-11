@@ -1,74 +1,49 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import "./index.scss";
-import axios from "axios";
+import { useNcaLayer } from "./hooks/useNcaLayer";
 
 const App = () => {
-  const [file, setFile] = useState<File>();
-  const [responseText, setResponseText] = useState("Ответ сервера");
-
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files?.length) {
-      setFile(files[0]);
-    }
-  };
-
-  const handleSign = async () => {
-    const formData = new FormData();
-
-    if (file) {
-      formData.append("file11", file);
-      const response = await axios.post(
-        "http://localhost:8888/ncaTest",
-        formData
-      );
-      console.log(response);
-      setResponseText(response.data);
-    }
-  };
-
-  const handleChangeTextArea = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    if (responseText) {
-      setResponseText(responseText);
-    }
-  };
+  const { signXmlCall, xmlRes } = useNcaLayer();
+  const [xml, setXml] = useState("");
 
   return (
     <div className="bg-blue-100 max-w-3xl max-h-96 flex flex-col m-auto rounded-2xl p-5">
-      <div className="flex justify-between">
-        <div>
-          <label className="cursor-pointer" htmlFor="inpFile">
-            {file ? file.name : "Выберите файл"}
-          </label>
-          <input
-            className="hidden"
-            type="file"
-            name="inpFile"
-            onChange={(e) => handleFileChange(e)}
-            id="inpFile"
+      <h3 className="text-2xl mb-4">Подписать XML</h3>
+      <div className="flex justify-between mb-4">
+        <div className="w-2/5 overflow-hidden rounded-xl">
+          <textarea
+            className="w-full h-full resize-none p-3 outline-none"
+            id="xmlToSign"
+            onChange={(e) => setXml(e.target.value)}
+            value={xml}
+            placeholder="Введите XML"
+            rows={6}
           />
         </div>
-
-        <div>
+        <div className="w-2/5 overflow-hidden rounded-xl">
           <textarea
-            onChange={(e) => handleChangeTextArea(e)}
-            className="resize-none"
-            value={responseText}
+            className="w-full h-full resize-none p-3 outline-none"
+            id="signedXml"
+            value={xmlRes}
+            placeholder="Подписанный XML"
+            rows={6}
+            readOnly
           />
         </div>
       </div>
-      <button
-        className="bg-white py-2 px-3 rounded-lg"
-        disabled={!file ? true : false}
-        onClick={() => handleSign()}
-      >
-        Подписать
-      </button>
+
+      <input
+        className="py-3 rounded-xl"
+        value="Подписать XML"
+        disabled={!xml}
+        onClick={() => signXmlCall(xml)}
+        type="button"
+      />
     </div>
   );
 };
 
-// ReactDOM.render(<App />, document.getElementById("app"));
+ReactDOM.render(<App />, document.getElementById("app"));
 
 export default App;
